@@ -54,6 +54,9 @@ const actionSchema = new Schema({
     oauth_client_id: String, // private, encrypted
     oauth_client_secret: String, // private, encrypted
   },
+  functions: {
+    type: [String],
+  },
 });
 // }, { minimize: false }); // Prevent removal of empty objects
 

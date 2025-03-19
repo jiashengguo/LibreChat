@@ -34,6 +34,15 @@ const createAgent = async (agentData) => {
 const getAgent = async (searchParameter) => await Agent.findOne(searchParameter).lean();
 
 /**
+ * Get agent documents
+ * @param {Object} searchParameter - The search parameters to find the agent to update.
+ * @param {string} searchParameter.id - The ID of the agent to update.
+ * @param {string} searchParameter.author - The user ID of the agent's author.
+ * @returns {Promise<Array<Agent>>} The agent documents as array of plain objects.
+ */
+const getAgents = async (searchParameter) => await Agent.find(searchParameter).lean();
+
+/**
  * Load an agent based on the provided ID
  *
  * @param {Object} params
@@ -303,6 +312,7 @@ const updateAgentProjects = async ({ user, agentId, projectIds, removeProjectIds
 module.exports = {
   Agent,
   getAgent,
+  getAgents,
   loadAgent,
   createAgent,
   updateAgent,

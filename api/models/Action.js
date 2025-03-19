@@ -48,6 +48,13 @@ const getActions = async (searchParams, includeSensitive = false) => {
 };
 
 /**
+ *  Retrieves an action by params.
+ * @param {Object} searchParams - The search parameters to find the action.
+ * @returns {Promise<Action>} A promise that resolves to the action document as a plain object, or null if no document was found.
+ */
+const getAction = async (searchParams) => Action.findOne(searchParams).lean();
+
+/**
  * Deletes an action by params.
  *
  * @param {Object} searchParams - The search parameters to find the action to delete.
@@ -74,6 +81,7 @@ const deleteActions = async (searchParams) => {
 
 module.exports = {
   getActions,
+  getAction,
   updateAction,
   deleteAction,
   deleteActions,
