@@ -5,9 +5,11 @@ const loadYaml = require('~/utils/loadYaml');
 const { logger } = require('~/config');
 const axios = require('axios');
 const yaml = require('js-yaml');
+const fs = require('fs');
 
 const projectRoot = path.resolve(__dirname, '..', '..', '..', '..');
 const defaultConfigPath = path.resolve(projectRoot, 'librechat.yaml');
+const additionalMCPConfig = 'mcp.yaml';
 
 let i = 0;
 
@@ -20,6 +22,7 @@ let i = 0;
 async function loadCustomConfig() {
   // Use CONFIG_PATH if set, otherwise fallback to defaultConfigPath
   const configPath = process.env.CONFIG_PATH || defaultConfigPath;
+  const mcpConfigPath = process.env.MCP_CONFIG_PATH || additionalMCPConfig;
 
   let customConfig;
 
@@ -58,6 +61,13 @@ async function loadCustomConfig() {
       i === 0 && i++;
       return null;
     }
+  }
+
+  if (fs.existsSync(mcpConfigPath)) {
+    const mcpConfig = loadYaml(mcpConfigPath);
+    console.log('MCP config loaded');
+    // merge mcpConfig with customConfig
+    customConfig.mcpServers = { ...customConfig.mcpServers, ...(mcpConfig?.mcpServers ?? {}) };
   }
 
   const result = configSchema.strict().safeParse(customConfig);
