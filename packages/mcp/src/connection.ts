@@ -1,7 +1,10 @@
 import { EventEmitter } from 'events';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { SSEClientTransport } from '@modelcontextprotocol/sdk/client/sse.js';
-import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import {
+  StdioClientTransport,
+  getDefaultEnvironment,
+} from '@modelcontextprotocol/sdk/client/stdio.js';
 import { WebSocketClientTransport } from '@modelcontextprotocol/sdk/client/websocket.js';
 import { ResourceListChangedNotificationSchema } from '@modelcontextprotocol/sdk/types.js';
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
@@ -44,7 +47,11 @@ export class MCPConnection extends EventEmitter {
   private reconnectAttempts = 0;
   iconPath?: string;
 
-  constructor(serverName: string, private readonly options: t.MCPOptions, private logger?: Logger) {
+  constructor(
+    serverName: string,
+    private readonly options: t.MCPOptions,
+    private logger?: Logger,
+  ) {
     super();
     this.serverName = serverName;
     this.logger = logger;
@@ -113,7 +120,9 @@ export class MCPConnection extends EventEmitter {
           return new StdioClientTransport({
             command: options.command,
             args: options.args,
-            env: options.env,
+            // workaround bug of mcp sdk:
+            // https://github.com/modelcontextprotocol/typescript-sdk/issues/216
+            env: { ...getDefaultEnvironment(), ...(options.env ?? {}) },
           });
 
         case 'websocket':
